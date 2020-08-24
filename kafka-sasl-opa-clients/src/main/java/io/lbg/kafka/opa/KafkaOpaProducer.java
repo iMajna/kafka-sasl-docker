@@ -16,7 +16,7 @@ import java.util.Properties;
 public class KafkaOpaProducer {
 
   private final static String TOPIC = "X";
-  private final static String BOOTSTRAP_SERVERS = "broker:9093";
+  private final static String BOOTSTRAP_SERVERS = "broker:9092";
   private boolean keepRunning = true;
 
   public static void main(String[] args) {
@@ -30,16 +30,11 @@ public class KafkaOpaProducer {
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
-    props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL");
-
-    props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, "/etc/kafka/secrets/kafka.producer.truststore.jks");
-    props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, "confluent");
-    props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, "/etc/kafka/secrets/kafka.producer.keystore.jks");
-    props.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, "confluent");
-    props.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, "confluent");
+    props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
 
     props.put(SaslConfigs.SASL_MECHANISM, "GSSAPI");
     props.put(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka");
+  
 
     while (keepRunning) {
       try {

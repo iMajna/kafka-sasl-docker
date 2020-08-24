@@ -27,8 +27,7 @@ import java.util.Properties;
 public class KafkaOpaConsumer {
 
   private final static String TOPIC = "X";
-  private final static String BOOTSTRAP_SERVERS = "broker:9093";
-  private static final String OPA_URL = "http://opa:8181/v1/data/kafka/message/allow";
+  private final static String BOOTSTRAP_SERVERS = "broker:9092";
   private boolean keepRunning = true;
 
   public static void main(String[] args) {
@@ -43,13 +42,7 @@ public class KafkaOpaConsumer {
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
 
-    props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL");
-
-    props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, "/etc/kafka/secrets/kafka.consumer.truststore.jks");
-    props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, "confluent");
-    props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, "/etc/kafka/secrets/kafka.consumer.keystore.jks");
-    props.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, "confluent");
-    props.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, "confluent");
+    props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
 
     props.put(SaslConfigs.SASL_MECHANISM, "GSSAPI");
     props.put(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka");
@@ -76,13 +69,6 @@ public class KafkaOpaConsumer {
 
   private boolean allow(String input) {
     try {
-      HttpURLConnection conn = (HttpURLConnection)
-        new URL(OPA_URL).openConnection();
-
-      conn.setDoOutput(true);
-      conn.setRequestMethod("POST");
-      conn.setRequestProperty("Content-Type", "application/json");
-
       OutputStream os = conn.getOutputStream();
       os.write(("{\"input\":" + input + "}").getBytes());
       os.flush();
